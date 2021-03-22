@@ -1,0 +1,285 @@
+How to Easily Set Up a Full-Featured Mail Server on CentOS 8 with iRedMail
+
+
+
+
+Setting up your own email server on Linux from scratch is a pain in the butt if you are not an advanced user. This tutorial will be showing you how to use iRedMail to quickly set up a full-featured mail server on CentOS 8, saving you lots of time and headaches.
+What is iRedMail?
+
+What is iReadMail?
+
+iRedMail is a shell script that automatically installs and configures all necessary mail server components on your Linux/BSD server, thus eliminating manual installation and configuration. With iRedMail, you can easily create unlimited mailboxes and unlimited mail domains in a web-based admin panel. Mailboxes can be stored in MariaDB/MySQL, PostgreSQL database, or OpenLDAP. The following is a list of open-source software that will be automatically installed and configured by iRedMail.
+
+    Postfix SMTP server
+    Dovecot IMAP server
+    Nginx web server to serve the admin panel and webmail
+    OpenLDAP, MySQL/MariaDB, or PostgreSQL for storing user information
+    Amavised-new for DKIM signing and verification
+    SpamAssassin for anti-spam
+    ClamAV for anti-virus
+    Roundcube webmail
+    Fail2ban for protecting SSH
+    mlmmj mailing list manager
+    Netdata server monitoring
+    iRedAPD Postfix policy server for greylisting
+
+
+Step 1: Choose the Right Hosting Provider and Buy a Domain Name
+
+To set up a full featured email server with iRedMail, you need a server with at least 2GB RAM, because after the installation, your server will use more than 1GB of RAM. This tutorial is done on a $10/month ScalaHosting VPS (virtual private server). I recommend ScalaHosting because it does not block port 25, so you can send unlimited emails (transactional email and newsletter) without spending money on SMTP relay. ScalaHosting doesn’t have any SMTP limits. You can send a million emails per day.
+
+Other VPS providers like DigitalOcean blocks port 25. DigitalOcean would not unblock port 25, so you will need to set up SMTP relay to bypass blocking, which can cost you additional money. If you use Vultr VPS, then port 25 is blocked by default. They can unblock it if you open a support ticket, but they may block it again at any time if they decide your email sending activity is not allowed. Vultr actually may re-block it if you use their servers to send newsletters.
+
+Go to ScalaHosting website to create an account. Choose the 2GB unmanaged Linux VPS plan.
+
+
+
+Once you created an account, ScalaHosting will send you an email with the server SSH login details. To log into your server, you use an SSH client. If you are using Linux or macOS on your computer, then simply open up a terminal window and run the following command to log into your server. Replace 12.34.56.78 with your server’s IP address.
+
+ssh root@12.34.56.78 -p 6543
+
+You will be asked to enter the password. I recommend following the tutorial linked below to properly set up your Linux VPS server on ScalaHosting.
+
+    How to Create a Linux VPS Server on ScalaHosting
+
+It is highly recommended that you follow the instructions below on a clean install of CentOS 8 system.
+
+You also need a domain name. I registered my domain name from NameCheap because the price is low and they give whois privacy protection free for life.
+Step 2: Creating DNS MX Record
+
+The MX record specifies which host or hosts handle emails for a particular domain name. For example, the host that handles emails for linuxbabe.com is mail.linuxbabe.com. If someone with a Gmail account sends an email to somebody@linuxbabe.com, then Gmail server will query the MX record of linuxbabe.com. When it finds out that mail.linuxbabe.com is responsible for accepting email, it then query the A record of mail.linuxbabe.com to get the IP address, thus the email can be delivered.
+
+In your DNS manager, create a MX record for your domain name. Enter @ in the Name field to represent the main domain name, then enter mail.your-domain.com in the Value field.
+
+
+
+
+Note: The hostname for MX record can not be an alias to another name. Also, It’s highly recommended that you use hostnames, rather than bare IP addresses for MX record.
+
+Your DNS manager may require you to enter a preference value (aka priority value). It can be any number between 0 and 65,356. A small number has higher priority than a big number. It’s recommended that you set the value to 0, so this mail server will have the highest priority for receiving emails. After creating MX record, you also need to create an A record for mail.your-domain.com , so that it can be resolved to an IP address. If your server uses IPv6 address, be sure to add AAAA record.
+
+Hint: If you use Cloudflare DNS service, you should not enable the CDN feature when creating A record for mail.your-domain.com. Cloudflare does not support SMTP proxy.
+
+
+Step 3: Configuring Hostname
+
+
+
+Setting up your own email server on Linux from scratch is a pain in the butt if you are not an advanced user. This tutorial will be showing you how to use iRedMail to quickly set up a full-featured mail server on CentOS 8, saving you lots of time and headaches.
+What is iRedMail?
+
+iRedMail is a shell script that automatically installs and configures all necessary mail server components on your Linux/BSD server, thus eliminating manual installation and configuration. With iRedMail, you can easily create unlimited mailboxes and unlimited mail domains in a web-based admin panel. Mailboxes can be stored in MariaDB/MySQL, PostgreSQL database, or OpenLDAP. The following is a list of open-source software that will be automatically installed and configured by iRedMail.
+
+    Postfix SMTP server
+    Dovecot IMAP server
+    Nginx web server to serve the admin panel and webmail
+    OpenLDAP, MySQL/MariaDB, or PostgreSQL for storing user information
+    Amavised-new for DKIM signing and verification
+    SpamAssassin for anti-spam
+    ClamAV for anti-virus
+    Roundcube webmail
+    Fail2ban for protecting SSH
+    mlmmj mailing list manager
+    Netdata server monitoring
+    iRedAPD Postfix policy server for greylisting
+
+Step 1: Choose the Right Hosting Provider and Buy a Domain Name
+
+To set up a full featured email server with iRedMail, you need a server with at least 2GB RAM, because after the installation, your server will use more than 1GB of RAM. This tutorial is done on a $10/month ScalaHosting VPS (virtual private server). I recommend ScalaHosting because it does not block port 25, so you can send unlimited emails (transactional email and newsletter) without spending money on SMTP relay. ScalaHosting doesn’t have any SMTP limits. You can send a million emails per day.
+
+Other VPS providers like DigitalOcean blocks port 25. DigitalOcean would not unblock port 25, so you will need to set up SMTP relay to bypass blocking, which can cost you additional money. If you use Vultr VPS, then port 25 is blocked by default. They can unblock it if you open a support ticket, but they may block it again at any time if they decide your email sending activity is not allowed. Vultr actually may re-block it if you use their servers to send newsletters.
+
+Go to ScalaHosting website to create an account. Choose the 2GB unmanaged Linux VPS plan.
+
+scalahosting get started
+
+Once you created an account, ScalaHosting will send you an email with the server SSH login details. To log into your server, you use an SSH client. If you are using Linux or macOS on your computer, then simply open up a terminal window and run the following command to log into your server. Replace 12.34.56.78 with your server’s IP address.
+
+ssh root@12.34.56.78 -p 6543
+
+You will be asked to enter the password. I recommend following the tutorial linked below to properly set up your Linux VPS server on ScalaHosting.
+
+    How to Create a Linux VPS Server on ScalaHosting
+
+It is highly recommended that you follow the instructions below on a clean install of CentOS 8 system.
+
+You also need a domain name. I registered my domain name from NameCheap because the price is low and they give whois privacy protection free for life.
+Step 2: Creating DNS MX Record
+
+The MX record specifies which host or hosts handle emails for a particular domain name. For example, the host that handles emails for linuxbabe.com is mail.linuxbabe.com. If someone with a Gmail account sends an email to somebody@linuxbabe.com, then Gmail server will query the MX record of linuxbabe.com. When it finds out that mail.linuxbabe.com is responsible for accepting email, it then query the A record of mail.linuxbabe.com to get the IP address, thus the email can be delivered.
+
+In your DNS manager, create a MX record for your domain name. Enter @ in the Name field to represent the main domain name, then enter mail.your-domain.com in the Value field.
+
+iredmail email server create MX record
+
+Note: The hostname for MX record can not be an alias to another name. Also, It’s highly recommended that you use hostnames, rather than bare IP addresses for MX record.
+
+Your DNS manager may require you to enter a preference value (aka priority value). It can be any number between 0 and 65,356. A small number has higher priority than a big number. It’s recommended that you set the value to 0, so this mail server will have the highest priority for receiving emails. After creating MX record, you also need to create an A record for mail.your-domain.com , so that it can be resolved to an IP address. If your server uses IPv6 address, be sure to add AAAA record.
+
+Hint: If you use Cloudflare DNS service, you should not enable the CDN feature when creating A record for mail.your-domain.com. Cloudflare does not support SMTP proxy.
+Step 3: Configuring Hostname
+
+Log into your server via SSH, then run the following command to update existing software packages.
+
+sudo dnf update -y
+
+I strongly recommend creating a sudo user for managing your server rather than using the default root user. Run the following command to create a user. Replace username with your preferred username.
+
+sudo adduser username
+
+Set a password for this user.
+
+sudo passwd username
+
+Add this user to the wheel group in order to use sudo.
+
+sudo gpasswd -a username wheel
+
+Switch to the new user.
+
+su - username
+
+Next, set a fully qualified domain name (FQDN) for your server with the following command.
+
+sudo hostnamectl set-hostname mail.your-domain.com
+
+We also need to update /etc/hosts file with a command-line text editor like Nano.
+
+sudo nano /etc/hosts
+
+Edit it like below. (Use arrow keys to move the cursor in the file.)
+
+127.0.0.1       mail.your-domain.com localhost
+
+Save and close the file. (To save a file in Nano text editor, press Ctrl+O, then press Enter to confirm. To close the file, press Ctrl+X.)
+
+To see the changes, re-login and run the following command to see your hostname.
+
+hostname -f
+
+
+
+
+
+
+
+
+Setting up your own email server on Linux from scratch is a pain in the butt if you are not an advanced user. This tutorial will be showing you how to use iRedMail to quickly set up a full-featured mail server on CentOS 8, saving you lots of time and headaches.
+What is iRedMail?
+
+iRedMail is a shell script that automatically installs and configures all necessary mail server components on your Linux/BSD server, thus eliminating manual installation and configuration. With iRedMail, you can easily create unlimited mailboxes and unlimited mail domains in a web-based admin panel. Mailboxes can be stored in MariaDB/MySQL, PostgreSQL database, or OpenLDAP. The following is a list of open-source software that will be automatically installed and configured by iRedMail.
+
+    Postfix SMTP server
+    Dovecot IMAP server
+    Nginx web server to serve the admin panel and webmail
+    OpenLDAP, MySQL/MariaDB, or PostgreSQL for storing user information
+    Amavised-new for DKIM signing and verification
+    SpamAssassin for anti-spam
+    ClamAV for anti-virus
+    Roundcube webmail
+    Fail2ban for protecting SSH
+    mlmmj mailing list manager
+    Netdata server monitoring
+    iRedAPD Postfix policy server for greylisting
+
+Step 1: Choose the Right Hosting Provider and Buy a Domain Name
+
+To set up a full featured email server with iRedMail, you need a server with at least 2GB RAM, because after the installation, your server will use more than 1GB of RAM. This tutorial is done on a $10/month ScalaHosting VPS (virtual private server). I recommend ScalaHosting because it does not block port 25, so you can send unlimited emails (transactional email and newsletter) without spending money on SMTP relay. ScalaHosting doesn’t have any SMTP limits. You can send a million emails per day.
+
+Other VPS providers like DigitalOcean blocks port 25. DigitalOcean would not unblock port 25, so you will need to set up SMTP relay to bypass blocking, which can cost you additional money. If you use Vultr VPS, then port 25 is blocked by default. They can unblock it if you open a support ticket, but they may block it again at any time if they decide your email sending activity is not allowed. Vultr actually may re-block it if you use their servers to send newsletters.
+
+Go to ScalaHosting website to create an account. Choose the 2GB unmanaged Linux VPS plan.
+
+scalahosting get started
+
+Once you created an account, ScalaHosting will send you an email with the server SSH login details. To log into your server, you use an SSH client. If you are using Linux or macOS on your computer, then simply open up a terminal window and run the following command to log into your server. Replace 12.34.56.78 with your server’s IP address.
+
+ssh root@12.34.56.78 -p 6543
+
+You will be asked to enter the password. I recommend following the tutorial linked below to properly set up your Linux VPS server on ScalaHosting.
+
+    How to Create a Linux VPS Server on ScalaHosting
+
+It is highly recommended that you follow the instructions below on a clean install of CentOS 8 system.
+
+You also need a domain name. I registered my domain name from NameCheap because the price is low and they give whois privacy protection free for life.
+Step 2: Creating DNS MX Record
+
+The MX record specifies which host or hosts handle emails for a particular domain name. For example, the host that handles emails for linuxbabe.com is mail.linuxbabe.com. If someone with a Gmail account sends an email to somebody@linuxbabe.com, then Gmail server will query the MX record of linuxbabe.com. When it finds out that mail.linuxbabe.com is responsible for accepting email, it then query the A record of mail.linuxbabe.com to get the IP address, thus the email can be delivered.
+
+In your DNS manager, create a MX record for your domain name. Enter @ in the Name field to represent the main domain name, then enter mail.your-domain.com in the Value field.
+
+iredmail email server create MX record
+
+Note: The hostname for MX record can not be an alias to another name. Also, It’s highly recommended that you use hostnames, rather than bare IP addresses for MX record.
+
+Your DNS manager may require you to enter a preference value (aka priority value). It can be any number between 0 and 65,356. A small number has higher priority than a big number. It’s recommended that you set the value to 0, so this mail server will have the highest priority for receiving emails. After creating MX record, you also need to create an A record for mail.your-domain.com , so that it can be resolved to an IP address. If your server uses IPv6 address, be sure to add AAAA record.
+
+Hint: If you use Cloudflare DNS service, you should not enable the CDN feature when creating A record for mail.your-domain.com. Cloudflare does not support SMTP proxy.
+Step 3: Configuring Hostname
+
+Log into your server via SSH, then run the following command to update existing software packages.
+
+sudo dnf update -y
+
+I strongly recommend creating a sudo user for managing your server rather than using the default root user. Run the following command to create a user. Replace username with your preferred username.
+
+sudo adduser username
+
+Set a password for this user.
+
+sudo passwd username
+
+Add this user to the wheel group in order to use sudo.
+
+sudo gpasswd -a username wheel
+
+Switch to the new user.
+
+su - username
+
+Next, set a fully qualified domain name (FQDN) for your server with the following command.
+
+sudo hostnamectl set-hostname mail.your-domain.com
+
+We also need to update /etc/hosts file with a command-line text editor like Nano.
+
+sudo nano /etc/hosts
+
+Edit it like below. (Use arrow keys to move the cursor in the file.)
+
+127.0.0.1       mail.your-domain.com localhost
+
+Save and close the file. (To save a file in Nano text editor, press Ctrl+O, then press Enter to confirm. To close the file, press Ctrl+X.)
+
+To see the changes, re-login and run the following command to see your hostname.
+
+hostname -f
+
+Step 4: Setting up Mail Server on CentOS 8 with iRedMail
+
+Run the following commands to download the latest version of iRedMail script installer from its Github repository.
+
+sudo dnf install wget tar -y
+
+wget https://github.com/iredmail/iRedMail/archive/1.3.2.tar.gz
+
+Extract the archived file.
+
+tar xvf 1.3.2.tar.gz
+
+Then cd into the newly-created directory.
+
+cd iRedMail-1.3.2/
+
+Add executable permission to the iRedMail.sh script.
+
+chmod +x iRedMail.sh
+
+Next, run the Bash script with sudo privilege.
+
+sudo bash iRedMail.sh
+
+The mail server setup wizard will appear. Use the Tab key to select Yes and press Enter.
+
+
