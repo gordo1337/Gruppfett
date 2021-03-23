@@ -20,8 +20,8 @@ if [ "$?" -eq 0 ]
 fi
 
 # Install epel-release repo
-yum makecache
-yum install epel-release
+yum makecache 
+yum install epel-release -y
 
 # Is Nginx installed? If not, it gets installed
 if [ "$(rpm -q --last='${Status}' "nginx" 2>/dev/null | grep -c "nginx-1.14*")" == "1" ]
@@ -29,7 +29,7 @@ if [ "$(rpm -q --last='${Status}' "nginx" 2>/dev/null | grep -c "nginx-1.14*")" 
 	echo " Nginx installed, OK"
 	else
  	echo "Nginx NOT installed..Installing it for you!"
-	yum install -y nginx
+	yum install nginx -y
 	systemctl start nginx
 	systemctl enable nginx	
 
@@ -43,7 +43,7 @@ fail2ban_func "$@"
 if [ "$?" -eq 0 ]
 	then echo "Fail2ban is already installed"
 	else  echo "Fail2ban is NOT installed, installing it for you.."
-	yum install fail2ban
+	yum install fail2ban -y
 	cp /etc/fail2ban/fail2ban.conf /etc/fail2ban/fail2ban.local
 	cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 	systemctl start fail2ban
