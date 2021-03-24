@@ -11,20 +11,20 @@ fail2ban_func () { rpm -q fail2ban>/dev/null && echo "$?"
 }
 
 # Nginx html 
-nignx_func () { echo "
- <html>
- </head>
-  
- <body>
+nginx_func () { echo "
+<html>
+</head>
+ 
+<body>
   
    
- <hi> Hello and welcome to webserver 1! </h1>
+<hi> Hello and welcome to webserver 1! </h1>
   
- <p>
- This is webserver1 so if the load balancer work
-  then it should read webserver 2 above when the webserver2 is active..
-  Have a nice day!
- </p>
+<p>
+This is webserver1 so if the load balancer work
+then it should read webserver 2 above when the webserver2 is active..
+Have a nice day!
+</p>
 " > /usr/share/nginx/html/index.html
 }
 
