@@ -283,3 +283,6 @@ sudo bash iRedMail.sh
 The mail server setup wizard will appear. Use the Tab key to select Yes and press Enter.
 
 
+Source : 
+https://www.linuxbabe.com/mail-server/centos-8-iredmail-email-server
+

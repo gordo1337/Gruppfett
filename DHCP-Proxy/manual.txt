@@ -1,0 +1,42 @@
+Network: 192.168.40.1
+
+##Tasks
+
+# 1.Install DHCP server package on Server
+-  SSH in to 192.168.40.1 and verify that it works. 
+-  Download and cache in binary format metdata for all know repos. 
+-  Install DHCP server package
+
+## 2.Configure DHCP server
+-edit in conf file /etc/dhcp/dhcpd.conf
+
+```
+default-lease-time 600;
+max-lease-time 7200;
+
+ddns-update-style none;
+authoritative;
+
+subnet 192.168.40.1 netmask 255.255.255.0 {
+    range 192.168.40.1 192.168.40.32;
+    option routers 192.168.40.1;
+}
+
+-start DCHP service
+-Check status
+-ADD the dhcpd service to the system startup, automatically start the dhcp service on boot
+
+### 3.Configure firewall 
+- Enable firewalld
+- Start firewalld 
+- Check status for firewalld
+- allow accsess to the DHCP server
+- Reload for the changes to take effect
+
+### 4.Client now got an ip adress 
+- You have configured a DHCP server in previous steps and it should be working.
+
+- The client is pre-configured 
+
+#### 5.Assign a static IP on eth1 
+-Using "nmcli", change IP adress to 192.168.40.1, gateway 192.168.40.1 dnf 192.168.40.1 setting on interface eth1 (wired connection) and change the method to manual 
