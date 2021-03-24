@@ -56,6 +56,10 @@ fi
 
 # Let's edit the index.html file! 
 nginx_func "$@"
+
+# Reloading Nginx
+systemctl reload nginx
+
 # Curl http://localhost
 # curl http://localhost>/dev/null && echo "$?"
 
