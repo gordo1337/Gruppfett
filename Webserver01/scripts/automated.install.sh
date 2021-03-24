@@ -10,6 +10,25 @@ conn_func () { ping -c1  google.com>/dev/null &&  echo "$?"
 fail2ban_func () { rpm -q fail2ban>/dev/null && echo "$?"
 }
 
+# Nginx html 
+nignx_func () { echo "
+ <html>
+ </head>
+  
+ <body>
+  
+   
+ <hi> Hello and welcome to webserver 1! </h1>
+  
+ <p>
+ This is webserver1 so if the load balancer work
+  then it should read webserver 2 above when the webserver2 is active..
+  Have a nice day!
+ </p>
+" > /usr/share/nginx/html/index.html
+}
+
+
 # Checking the internet connection
 conn_func "$@"
 if [ "$?" -eq 0 ] 
@@ -35,6 +54,8 @@ if [ "$(rpm -q --last='${Status}' "nginx" 2>/dev/null | grep -c "nginx-1.14*")" 
 
 fi
 
+# Let's edit the index.html file! 
+nginx_func "$@"
 # Curl http://localhost
 # curl http://localhost>/dev/null && echo "$?"
 
