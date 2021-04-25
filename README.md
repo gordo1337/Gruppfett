@@ -1,12 +1,19 @@
 ```
-########################
-# Gruppfett            #
-#Group 1 Agile project.#
-########################
-Members: Johan Z0rk0z, Linda, Ecce, Rikard, Gottfrid Gordo1337
+                      *************************************
+                      #              README.MD            #
+                      #     GROUP PROJECT Agile methods   #
+                      #       WORKING ENVIROMENT FOR CO   # 
+       ∙·▫▫ᵒᴼᵒ▫ₒₒ▫ᵒᴼ∙ #                                   # ᴼᵒ▫ₒₒ▫ᵒᴼᵒ▫▫·∙∙
+                      #                                   #
+                      #           CONTRIBUTERS:           #
+                      GOTTFRID , JOHAN, ECCE, LINDA, RIKARD   
+                      #                                   #
+                      #                                   #
+                      #************************************
 
-General Gateway/DNS = 192.168.40.1
-{Webserver 1 = 192.168.40.22
+
+General Gateway/DNS = ()
+{Webserver 1 = ()
 Hostname = Web01
 Username= ()
 Passwd = ()
@@ -15,7 +22,7 @@ Passwd = ()
 Username= ()
 Passwd = ()
 }
-{Proxy/DHCP = 192.168.40.21
+{Proxy/DHCP = ()
 Username= ()
 Passwd = ()
 }
